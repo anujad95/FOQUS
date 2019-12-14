@@ -8,7 +8,7 @@ See LICENSE.md for license and copyright details.
 import os
 import logging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QInputDialog, QAbstractItemView
+from PyQt5.QtWidgets import QInputDialog, QAbstractItemView, QMessageBox
 from PyQt5.QtCore import QObject, QEvent, QDataStream, Qt, pyqtSlot
 
 _log = logging.getLogger("foqus.{}".format(__name__))
@@ -100,6 +100,8 @@ class calculatedColumnsDialog(_calculatedColumnsUI, _calculatedColumns):
         self._current = name
         self.comboBox.addItem(name)
         self.dat.flowsheet.results.set_calculated_column(self._current, expr)
+        print(self.dat.flowsheet.results.calculated_columns)
+        print(self.dat.flowsheet.output.compoundNames())
         self.comboBox.setCurrentText(self._current)
 
     def add_dialog(self):

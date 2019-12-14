@@ -158,6 +158,14 @@ class surrogateMethod(surrogate):
             dtype=int,
             desc=" Maximum number of successive simulator failures allowed before quit",
             hint="MAXSIM must be a nonnegative integer")
+#        Transforms
+        self.options.add(
+            name="TRANSFORMS",
+            section="DATA Settings",
+            default=0,
+            dtype=int,
+            desc="Surrogate Output Variable Transformation",
+            hint="This must be provided in a list")
         #Sampler
         self.samplers={
             "None":0,
@@ -604,6 +612,7 @@ class surrogateMethod(surrogate):
         nvaldata = self.graph.results.count_rows(filtered=True)
         #Get some option values
         nsample = self.options['NSAMPLE'].value
+        ntrans = self.options['TRANSFORMS'].value
         maxsim = self.options['MAXSIM'].value
         modeler = self.modelers.get(self.options['MODELER'].value, 1)
         preset = self.options['PRESET'].value
@@ -701,6 +710,7 @@ class surrogateMethod(surrogate):
             af.write('#simout output.txt\n')
             af.write("ninputs {0}\n".format(nin))
             af.write("noutputs {0}\n".format(nout))
+            af.write("ntrans {0}\n".format(ntrans))
             # write the min vector
             self.minVals = []
             for x in self.input:
@@ -808,8 +818,18 @@ class surrogateMethod(surrogate):
                 for s in customcon:
                     af.write("  {0}\n".format(s))
                 af.write("END_CUSTOMCON\n")
-            #Write initial data section
+                
+#           Adding Output Variable Transforms
             res = self.graph.results
+            if len(res.calculated_columns.keys()) > 0:
+                af.write("\nBEGIN_TRANSFORMS\n")
+                print(self.options["TRANSFORMS"].value)
+                for num in range((self.options["TRANSFORMS"].value)):
+                    print(val)
+                    af.write("{0}\n".format(list(res.calculated_columns.keys())[num]))
+                af.write("END_TRANSFORMS\n")
+            #Write initial data section
+#            res = self.graph.results
             res.set_filter(dataFilter)
             if res.count_rows(filtered=True) > 0:
                 af.write("\nBEGIN_DATA\n")

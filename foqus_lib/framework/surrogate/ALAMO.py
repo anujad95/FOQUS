@@ -637,7 +637,8 @@ class surrogateMethod(surrogate):
         customcon = []
         for ii, x in enumerate(self.output):
             val = copy.copy(self.getOutputVarOption('CUSTOMCON', x))
-            for i, c in enumerate(val):
+            print(val)
+            for i, c in enumerate(np.array(val)):
                 val[i] = "{0} {1}".format(ii+1, c)
             customcon.extend(val)
         #Replace periods with underscore in variable labels for ALAMO
